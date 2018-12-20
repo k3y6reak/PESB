@@ -1,0 +1,5 @@
+{
+    "title" : "### 명령어 리스트 ###",
+    "text" : " *ErrorList* : 에러 리스트 출력\n *ErrorType* : 특정 에러가 궁금할때\n \t 예) @pesb *Find: PermissonError* ",
+    "mrkdwn": true
+}

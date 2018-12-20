@@ -1,0 +1,5 @@
+{
+    "title" : "### 에러 리스트 ###",
+    "text" : " *ZeroDivisionError*\n *ModuleNotFoundError*\n *IndexError*\n *KeyError*\n *FileExistsError*\n *FileNotFoundError*\n *PermissionError*\n *IndentationError*\n *UnicodeDecodeError*\n *UnicodeEncodeError*",
+    "mrkdwn": true
+}

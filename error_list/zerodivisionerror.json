@@ -1,0 +1,5 @@
+{
+    "title" : " ZeroDivisionError",
+    "text": " *원인* : A/B 또는 A%B 를 수행하는데 `B가 0인 경우 발생`하는 에러입니다.\n *해결방안* : B를 0이 아닌 값을 사용하세요.\n",
+    "mrkdwn": true
+}

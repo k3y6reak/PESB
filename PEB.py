@@ -11,10 +11,10 @@ from flask import Flask, request, make_response, render_template
 
 app = Flask(__name__)
 
-slack_token = ""
-slack_client_id = ""
-slack_client_secret = ""
-slack_verification = ""
+slack_token = "xoxb-501387243681-510274654630-tX4Ez9QyW4NNUuBmszWug1VZ"
+slack_client_id = "501387243681.509071449525"
+slack_client_secret = "85b918937f941152d4aebb1620d723a5"
+slack_verification = "IqjgDZKSi2U3pBfl0gpv1I5x"
 sc = SlackClient(slack_token)
 
 # stackoverflow에서 채택된 답변만 파싱해 딕셔너리로 리턴.
@@ -32,6 +32,7 @@ def stackoverflow_parse(errorname):
             title = div.find("a", class_="question-hyperlink").get("title")
             results[title] = "https://stackoverflow.com"+link
 
+
     return results
 
 # docs.python.org에서 에러 이름을 찾아 그 내용만 파싱 후 반환.
@@ -45,6 +46,8 @@ def python_docs_parse(errorname):
     for exception in soup.find_all("dl", class_="exception"):
         if exception.find_all("dt", id=re.compile(errorname, re.IGNORECASE)):
             return exception.find("p").get_text()
+        else:
+            return "해당 에러가 존재하지 않습니다."
 
 # json 파일을 열고, 읽는 부분이 많아 하나의 함수로 작성하여 파일 이름만 받아옴.
 def open_json_file_read(filename):
@@ -89,22 +92,31 @@ def Error_Search(text):
             # :를 기준으로 한번 더 자르기.
             tmp = words[-1].split(":")
             local_search = error_name_search(tmp[-1])
-            # error_name_search 함수는 json 형태로 반환됨. text 부분이 slakc에서 보여지기 때문에
-            # text 부분을 파싱해 붙여주는 부분.
-            local_search['text'] += " *공식문서 설명* : " + python_docs_parse(tmp[-1]) + "\n"
-            local_search['text'] += "### *스택오버플로우 채택 질문* ###\n"
-            # stackoverflow_parse 함수는 딕셔너리 형태로 반환됨.
-            for result in stackoverflow_parse(tmp[-1]).items():
+            #해당 에러가 존재하는 경우.
+            if local_search['title'] != " Error Not Found":
+                # error_name_search 함수는 json 형태로 반환됨. text 부분이 slakc에서 보여지기 때문에
+                # text 부분을 파싱해 붙여주는 부분.
+                local_search['text'] += " *공식문서 설명* : " + python_docs_parse(tmp[-1]) + "\n"
+                local_search['text'] += "### *스택오버플로우 채택 질문* ###\n"
+                # stackoverflow_parse 함수는 딕셔너리 형태로 반환됨.
+                for result in stackoverflow_parse(tmp[-1]).items():
                     local_search['text'] += "<" + result[1] + "|" + result[0] + ">\n"
-            keywords.append(local_search)
+                keywords.append(local_search)
+            #해당 에러가 존재하지 않는 경우.
+            else:
+                keywords.append(local_search)
         else:
             # 사용자가 올바르게 검색한 경우.
             local_search = error_name_search(words[-1])
-            local_search['text'] += " *공식문서 설명* : " + python_docs_parse(words[-1]) + "\n"
-            local_search['text'] += "### *스택오버플로우 채택 질문* ###\n"
-            for result in stackoverflow_parse(words[-1]).items():
+            if local_search['title'] != " Error Not Found":
+                local_search['text'] += " *공식문서 설명* : " + python_docs_parse(words[-1]) + "\n"
+                local_search['text'] += "### *스택오버플로우 채택 질문* ###\n"
+
+                for result in stackoverflow_parse(words[-1]).items():
                     local_search['text'] += "<" + result[1] + "|" + result[0] + ">\n"
-            keywords.append(local_search)
+                keywords.append(local_search)
+            else:
+                keywords.append(local_search)
     else:
         # 명령어가 존재하지 않는 경우.
         keywords.append(open_json_file_read("./content/default.json"))

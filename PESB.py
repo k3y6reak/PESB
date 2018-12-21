@@ -11,10 +11,10 @@ from flask import Flask, request, make_response, render_template
 
 app = Flask(__name__)
 
-slack_token = "xoxb-501387243681-510274654630-Hgy8x1m23d32yjL4dIZ5gNEX"
-slack_client_id = "501387243681.509071449525"
-slack_client_secret = "85b918937f941152d4aebb1620d723a5"
-slack_verification = "IqjgDZKSi2U3pBfl0gpv1I5x"
+slack_token = ""
+slack_client_id = ""
+slack_client_secret = ""
+slack_verification = ""
 sc = SlackClient(slack_token)
 
 # stackoverflow에서 채택된 답변만 파싱해 딕셔너리로 리턴.

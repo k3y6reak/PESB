@@ -44,10 +44,11 @@ def python_docs_parse(errorname):
     soup = BeautifulSoup(sourcecode, "html.parser")
 
     for exception in soup.find_all("dl", class_="exception"):
-        if exception.find_all("dt", id=re.compile(errorname, re.IGNORECASE)):
-            return exception.find("p").get_text()
-        else:
-            return "해당 에러가 존재하지 않습니다."
+        dt_tag = exception.find("dt", id=re.compile(errorname, re.IGNORECASE))
+        if dt_tag:
+            p_tag = exception.find("dd").get_text().strip()
+            return p_tag
+    return "해당 에러가 존재하지 않습니다."
 
 # json 파일을 열고, 읽는 부분이 많아 하나의 함수로 작성하여 파일 이름만 받아옴.
 def open_json_file_read(filename):
